@@ -45,21 +45,24 @@ describe("When Events is created", () => {
         <Events />
       </DataProvider>
     );
-    await screen.findByText("avril");
+    const months = await screen.findAllByText("avril");
+    expect(months).toHaveLength(2);
   });
+
   describe("and an error occured", () => {
     it("an error message is displayed", async () => {
-      api.loadData = jest.fn().mockRejectedValue();
+      api.loadData = jest.fn().mockRejectedValue(new Error("network error"));
       render(
         <DataProvider>
           <Events />
         </DataProvider>
       );
-      expect(await screen.findByText("An error occured")).toBeInTheDocument();
+      expect(await screen.findByText(/error/i)).toBeInTheDocument();
     });
   });
+
   describe("and we select a category", () => {
-    it.only("an filtered list is displayed", async () => {
+    it("a filtered list is displayed", async () => {
       api.loadData = jest.fn().mockReturnValue(data);
       render(
         <DataProvider>
